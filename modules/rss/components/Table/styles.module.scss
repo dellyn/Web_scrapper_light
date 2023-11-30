@@ -1,0 +1,136 @@
+/* Table.module.css */
+
+$border-color: rgb(155, 155, 155);
+$border-radius: 8px;
+$font-size: 14px;
+$font-size-100: 16px;
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+    font-family: 'Helvetica', 'Open Sans', 'sans-serif';
+    font-size: $font-size;
+    border-spacing: 0;
+    margin-top: 24px;
+    border-radius: 20px;
+
+    th,
+    td {
+        padding: 4px 8px;
+        border: 1px solid $border-color;
+    }
+
+    .thead {
+        font-size: $font-size-100;
+
+        th {
+            padding: 8px;
+            border-top: 1.5px solid $border-color;
+
+            &:first-child {
+                border-radius: $border-radius 0 0 0;
+            }
+
+            &:last-child {
+                border-radius: 0 $border-radius 0 0;
+            }
+        }
+    }
+
+    .tbody {
+        tr {
+            &:last-child() {
+                border-bottom: 5px solid $border-color;
+            }
+        }
+
+        th {
+            padding: 8px;
+            border-top: 1.5px solid $border-color;
+
+            &:first-child {
+                border-radius: $border-radius 0 0 0;
+            }
+
+            &:last-child {
+                border-radius: 0 $border-radius 0 0;
+            }
+        }
+
+        .tableRow {
+            overflow: hidden;
+
+            &:nth-child(even) {
+                background-color: rgba(226, 238, 247, 0.5);
+            }
+
+            &:hover {
+                background-color: rgb(226, 238, 247);
+            }
+
+            &.statusRow {
+                td {
+                    padding: 16px;
+                    font-size: $font-size-100;
+                    text-align: center;
+                    border-radius: 0 0 $border-radius $border-radius;
+                }
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+
+            td {
+                max-height: 44px;
+            }
+        }
+
+        .contentCell {
+            position: relative;
+            padding-right: 15px;
+            height: 44px;
+
+            .expandBtn {
+                position: absolute;
+                outline: none;
+                border: none;
+                background: #ffa700;
+                border-radius: 4px;
+                width: 20px;
+                height: 20px;
+                color: #fff;
+                right: 2px;
+                bottom: 2px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.5;
+            }
+
+            &:hover {
+                .expandBtn {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .linkButton {
+            overflow: hidden;
+            width: 100%;
+            display: block;
+        }
+
+        .text {
+            height: inherit;
+            height: inherit;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contentCellExpanded {
+            height: auto;
+        }
+    }
+}

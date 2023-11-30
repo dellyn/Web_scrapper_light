@@ -1,0 +1,30 @@
+{
+    "dependencies": {
+        "@types/jsdom": "^21.1.6",
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "classnames": "^2.3.2",
+        "eslint": "^8",
+        "eslint-config-next": "14.0.3",
+        "jsdom": "^23.0.0",
+        "next": "14.0.3",
+        "prettier": "^3.1.0",
+        "react": "^18",
+        "react-dom": "^18",
+        "typescript": "^5"
+    },
+    "name": "web-srapper-next",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev",
+        "lint": "next lint",
+        "start": "npx serve@latest out"
+    },
+    "version": "0.1.0",
+    "devDependencies": {
+        "@types/puppeteer": "^7.0.4"
+    }
+}
