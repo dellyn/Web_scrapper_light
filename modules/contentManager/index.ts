@@ -1,7 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import { extractUrlParts } from '#libraries/http/fetch/url/extractUrlParts'
+import { extractUrlParts } from '#libraries/url/extractUrlParts'
 import { Article } from '#logic/data/types'
+import { ScrappedContent } from '#modules/contentScrapper/services/scrapper/types'
 
 function getFilePath(fileName = 'default') {
     const id = 'v0'
@@ -11,7 +12,10 @@ function getFilePath(fileName = 'default') {
     )
 }
 
-export function saveArticlesData(articles: Article[], feedHostname: string) {
+export function writeArticlesDataToFile(
+    articles: Article[],
+    feedHostname: string
+) {
     articles.forEach((article) => {
         const { hostname } = extractUrlParts(article.url)
         if (!hostname) return
@@ -31,11 +35,15 @@ export function saveArticlesData(articles: Article[], feedHostname: string) {
             updatedArticles.push(article)
         }
 
-        fs.writeFileSync(filePath, JSON.stringify(articles, null, 2), 'utf8')
+        fs.writeFileSync(
+            filePath,
+            JSON.stringify(updatedArticles, null, 2),
+            'utf8'
+        )
     })
 }
 
-export function updateArticleContent(
+export function updateArticleContentInFile(
     url = '',
     content = '',
     feedHostname: string
@@ -52,4 +60,24 @@ export function updateArticleContent(
         existingArticle.content = content
         fs.writeFileSync(filePath, JSON.stringify(articles, null, 2), 'utf8')
     }
+}
+
+export function mergeArticlesContent(
+    articles: Article[],
+    articlesContent: ScrappedContent[]
+) {
+    const mergedArticles = articlesContent.length
+        ? articles.map((article) => {
+              const correspondingArticleContent = articlesContent.find(
+                  (articleContent) => articleContent.url === article.url
+              )
+              return {
+                  ...article,
+                  content:
+                      correspondingArticleContent?.content || article.content,
+              }
+          })
+        : articles
+
+    return mergedArticles
 }

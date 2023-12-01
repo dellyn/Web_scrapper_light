@@ -1,53 +1,58 @@
-import { ContentToScrape, HostnameSelectors, ScrappedContent } from './types'
-import { extractUrlParts } from '#libraries/http/fetch/url/extractUrlParts'
-import { authenticateWithProxy, launchWithProxy } from './pupeteer'
+import { HostnameSelectors, PageToScrape, ScrappedContent } from './types'
+import {
+    closeBrowsers,
+    getBrowser,
+    initPuppeteerPool,
+} from '#libraries/pupeteer/tool'
+import pLimit from 'p-limit'
+import { extractUrlParts } from '#libraries/url/extractUrlParts'
+import { scrapeContentFromURL } from '#libraries/scrapper'
 
-async function scrapeContentFromURL(url: string, selector: string) {
-    const browser = await launchWithProxy()
+const concurrentScrapersLimit = 15
 
-    const page = await browser.newPage()
-    await authenticateWithProxy(page)
+const defaultContentHTMLSelector = 'body'
 
-    try {
-        await page.goto(url)
-    } catch (error) {
-        console.log('error', error)
-    }
-
-    const content = await page.evaluate((sel) => {
-        const element = document.querySelector(sel)
-        return element ? element.innerText : ''
-    }, selector)
-
-    await browser.close()
-    return content
-}
-
-function getCorrespondingHtmlSelector(url: string): string {
-    const urlsSelectors: HostnameSelectors = {
-        'www.michigandaily.com': '.main-content',
-        'fox2now.com': 'body',
-    }
+function getContentHTMLSelector(url: string): string {
     const { hostname } = extractUrlParts(url)
+    const urlSelectors: HostnameSelectors = {
+        'www.michigandaily.com': '.main-content .entry-content',
+        'www.unian.ua': '.article-text',
+        'sport.unian.ua': '.article-text',
+    }
 
-    return urlsSelectors[hostname]
+    return urlSelectors[hostname] || defaultContentHTMLSelector
 }
 
-export async function scrapeArticlesContent(
-    contentToScrape: ContentToScrape[],
+export async function scrapePageContent(
+    url: string,
+    updateContent: Function
+): Promise<ScrappedContent> {
+    const contentHTMLSelector = getContentHTMLSelector(url)
+    const browser = await getBrowser()
+    const page = await browser.newPage()
+    const content = await scrapeContentFromURL(url, contentHTMLSelector, page)
+
+    if (updateContent && content) {
+        updateContent(url, content)
+    }
+
+    return { url, content }
+}
+
+export async function scrapePagesContent(
+    pagesToScrape: PageToScrape[],
     updateContent: Function
 ): Promise<ScrappedContent[]> {
-    const results = await Promise.allSettled(
-        contentToScrape.map(async ({ url }) => {
-            const htmlSelector = getCorrespondingHtmlSelector(url)
-            const content = await scrapeContentFromURL(url, htmlSelector)
-            if (updateContent) {
-                updateContent(url, content)
-            }
+    await initPuppeteerPool()
+    const limit = pLimit(concurrentScrapersLimit)
 
-            return { url, content }
-        })
+    const promises = pagesToScrape.map(({ url }) =>
+        limit(() => scrapePageContent(url, updateContent))
     )
+
+    const results = await Promise.allSettled(promises)
+    closeBrowsers()
+
     return results
         .filter((result) => result.status === 'fulfilled' && result.value)
         .map((result) => result.value)

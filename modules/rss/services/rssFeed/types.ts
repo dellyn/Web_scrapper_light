@@ -1,4 +1,3 @@
-// Define the structure of your RSS feed items
 import { Article } from '#logic/data/types'
 import { Output as RSSOutput } from 'rss-parser'
 

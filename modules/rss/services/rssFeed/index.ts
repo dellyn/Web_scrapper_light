@@ -24,8 +24,7 @@ export function parseArticlesFromFeed(rssFeed: RSSFeed): Article[] {
                 : '',
             url: item.link || '',
             title: item.title || '',
-            // content: textContent || '',
-            content: '',
+            content: textContent || '',
             description: item.description || '',
         }
     })

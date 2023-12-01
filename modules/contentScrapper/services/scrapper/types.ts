@@ -1,6 +1,5 @@
-export interface ContentToScrape {
+export interface PageToScrape {
     url: string
-    htmlSelector: string
 }
 
 export interface ScrappedContent {
