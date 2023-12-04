@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from 'react'
-import styles from './styles.module.scss'
 import { TableProps } from './types'
+import './styles.scss'
+import classNames from 'classnames'
 
 const Table: React.FC<TableProps> = ({ data, loading }) => {
-    const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>(
+    const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>(
         {}
     )
     const isEmpty = !data.length
+    const containerClassName = classNames('table', { empty: isEmpty })
+    const isAnyExpanded = Object.keys(expandedRows).length > 0
 
-    const toggleRow = (id: number) => {
+    function toggleAllRows() {
+        const allIds = isAnyExpanded
+            ? {}
+            : data.reduce<Record<string, boolean>>((acc, item) => {
+                  acc[item.url] = true // Expand all rows
+                  return acc
+              }, {})
+
+        setExpandedRows(allIds)
+    }
+
+    const toggleRow = (id: string) => {
         const updatedList = { ...expandedRows }
         const isExpanded = !!expandedRows[id]
 
@@ -21,27 +35,39 @@ const Table: React.FC<TableProps> = ({ data, loading }) => {
     }
 
     function resetExpandedRows() {
-        setExpandedRows([])
+        setExpandedRows({})
     }
 
     useEffect(() => {
         resetExpandedRows()
     }, [data])
 
+    console.log({ expandedRows })
+
+    const renderExpandBtn = (expanded: boolean, onClick: () => void) => (
+        <button onClick={onClick} className="expand-btn">
+            <span>{expanded ? '×' : '⋯'}</span>
+        </button>
+    )
     return (
-        <table className={`${styles.table} ${isEmpty ? '' : styles.empty}`}>
-            <thead className={styles.thead}>
+        <table className={containerClassName}>
+            <thead className="head">
                 <tr>
                     <th>Title</th>
-                    <th>Content</th>
+                    <th className="content-cell">
+                        <span>Content</span>{' '}
+                        {data.length
+                            ? renderExpandBtn(isAnyExpanded, toggleAllRows)
+                            : ''}
+                    </th>
                     <th>URL</th>
                     <th>Published</th>
                     <th>Description</th>
                 </tr>
             </thead>
-            <tbody className={styles.tbody}>
+            <tbody className="body">
                 {(loading || isEmpty) && (
-                    <tr className={`${styles.tableRow} ${styles.statusRow}`}>
+                    <tr className={'table-row status-row'}>
                         <td colSpan={5}>
                             {loading ? 'Loading...' : ''}
                             {!loading && isEmpty ? 'No data' : ''}
@@ -50,35 +76,23 @@ const Table: React.FC<TableProps> = ({ data, loading }) => {
                 )}
                 {!isEmpty &&
                     data.map((item, index) => (
-                        <tr key={index} className={styles.tableRow}>
+                        <tr key={index} className="table-row">
                             <td>{item.title}</td>
-                            <td className={styles.contentCell}>
+                            <td className="table-cell">
                                 <div
-                                    className={
-                                        expandedRows[index]
-                                            ? `${styles.contentCell} ${styles.contentCellExpanded}`
-                                            : styles.contentCell
-                                    }
+                                    className={`content-cell ${
+                                        expandedRows[item.url] ? 'expanded' : ''
+                                    }`}
                                 >
-                                    <div className={styles.text}>
-                                        {item.content}
-                                    </div>
+                                    <div className="text">{item.content}</div>
                                 </div>
-                                <button
-                                    onClick={() => toggleRow(index)}
-                                    // should use unicode characters instead
-                                    className={styles.expandBtn}
-                                >
-                                    {
-                                        <span>
-                                            {expandedRows[index] ? '×' : '⋯'}
-                                        </span>
-                                    }
-                                </button>
+                                {renderExpandBtn(expandedRows[item.url], () =>
+                                    toggleRow(item.url)
+                                )}
                             </td>
                             <td>
                                 <a
-                                    className={styles.linkButton}
+                                    className="link-button"
                                     href={item.url}
                                     target="_blank"
                                     rel="noreferrer"
@@ -87,15 +101,13 @@ const Table: React.FC<TableProps> = ({ data, loading }) => {
                                 </a>
                             </td>
                             <td>{item.publishedAt}</td>
-                            <td className={styles.contentCell}>
+                            <td className="table-cell">
                                 <div
-                                    className={
-                                        expandedRows[index]
-                                            ? `${styles.contentCell} ${styles.contentCellExpanded}`
-                                            : styles.contentCell
-                                    }
+                                    className={`content-cell ${
+                                        expandedRows[item.url] ? 'expanded' : ''
+                                    }`}
                                 >
-                                    <div className={styles.text}>
+                                    <div className="text">
                                         {item.description}
                                     </div>
                                 </div>

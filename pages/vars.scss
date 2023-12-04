@@ -1,0 +1,21 @@
+$primary: #101d35;
+$primary-hover: #1b3454;
+$primary-text: rgb(239, 239, 239);
+$primary-text-hover: rgb(217, 217, 217);
+$primary-200: #21202c;
+$primary-disabled: rgb(158, 158, 158);
+$primary-transition: 0.15s ease-in-out;
+
+$secondary: rgba(153, 0, 255, 0.6);
+$secondary-hover: rgba(153, 0, 255, 0.8);
+$secondary-text: rgba(255, 255, 255, 1);
+
+$button-bg: $secondary;
+$button-text: $secondary-text;
+$button-hover: $secondary-hover;
+$button-border: $primary-text;
+$button-disabled: $primary-disabled;
+
+$input-bg: $primary-200;
+$input-text: $primary-text;
+$input-hover: $secondary-hover;

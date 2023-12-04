@@ -1,9 +1,12 @@
 import { Article } from '#logic/data/types'
 import { Table } from '#modules/rss/components/Table'
 import { useEffect, useState } from 'react'
+import './global.scss'
+import './styles.scss'
+
 export default function Home() {
     const [feedResourceUrl, setFeedResourceUrl] = useState(
-        'https://www.michigandaily.com/feed'
+        'https://fox2now.com/feed'
     )
     const [articles, setArticles] = useState<Article[]>([])
     const [loading, setLoading] = useState(false)
@@ -31,16 +34,22 @@ export default function Home() {
     }, [articles])
 
     return (
-        <div>
-            <input
-                type="text"
-                value={feedResourceUrl}
-                onChange={(e) => setFeedResourceUrl(e.target.value)}
-            />
-            <button onClick={fetchArticles} disabled={loading}>
-                Scrape Articles
-            </button>
-
+        <div className="home-page">
+            <header className="sticky-header">
+                <input
+                    type="text"
+                    value={feedResourceUrl}
+                    onChange={(e) => setFeedResourceUrl(e.target.value)}
+                    className="url-input"
+                />
+                <button
+                    className="action-button"
+                    onClick={fetchArticles}
+                    disabled={loading}
+                >
+                    Scrape Articles
+                </button>
+            </header>
             <Table data={articles} loading={loading} error={null} />
         </div>
     )

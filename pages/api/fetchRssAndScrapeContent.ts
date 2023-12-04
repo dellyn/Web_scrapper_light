@@ -22,7 +22,7 @@ export default async function handler(
 
     try {
         pagesToScrape = await getRssFeedArticles(url)
-        
+
         if (!pagesToScrape) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: 'No content were scraped',
@@ -50,6 +50,8 @@ export default async function handler(
             message: 'Oops, Something went wrong',
         })
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+            error || { message: 'Ooops. Something went wrong' }
+        )
     }
 }

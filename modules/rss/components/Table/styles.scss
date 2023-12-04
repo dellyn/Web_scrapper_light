@@ -1,31 +1,42 @@
 /* Table.module.css */
+@import '../../../../pages/vars';
 
 $border-color: rgb(155, 155, 155);
 $border-radius: 8px;
-$font-size: 14px;
-$font-size-100: 16px;
+$font-size: 16px;
 
 .table {
     width: 100%;
     table-layout: fixed;
-    font-family: 'Helvetica', 'Open Sans', 'sans-serif';
-    font-size: $font-size;
     border-spacing: 0;
     margin-top: 24px;
     border-radius: 20px;
+    font-size: inherit;
 
     th,
     td {
         padding: 4px 8px;
         border: 1px solid $border-color;
     }
-
-    .thead {
-        font-size: $font-size-100;
+    .expand-btn {
+        position: absolute;
+        border-radius: 4px;
+        width: 20px;
+        height: 20px;
+        right: 2px;
+        bottom: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.5;
+    }
+    .head {
+        font-size: $font-size;
 
         th {
             padding: 8px;
             border-top: 1.5px solid $border-color;
+            background-color: $secondary;
 
             &:first-child {
                 border-radius: $border-radius 0 0 0;
@@ -34,10 +45,21 @@ $font-size-100: 16px;
             &:last-child {
                 border-radius: 0 $border-radius 0 0;
             }
+
+            &.content-cell {
+                position: relative;
+
+                .expand-btn {
+                    top: 5px;
+                    right: 8px;
+                    margin-left: auto;
+                    opacity: 1;
+                }
+            }
         }
     }
 
-    .tbody {
+    .body {
         tr {
             &:last-child() {
                 border-bottom: 5px solid $border-color;
@@ -57,21 +79,22 @@ $font-size-100: 16px;
             }
         }
 
-        .tableRow {
+        .table-row {
             overflow: hidden;
+            transition: $primary-transition;
 
             &:nth-child(even) {
-                background-color: rgba(226, 238, 247, 0.5);
+                background-color: $primary-hover;
             }
 
             &:hover {
-                background-color: rgb(226, 238, 247);
+                background-color: rgba($secondary, 0.2);
             }
 
-            &.statusRow {
+            &.status-row {
                 td {
                     padding: 16px;
-                    font-size: $font-size-100;
+                    font-size: $font-size;
                     text-align: center;
                     border-radius: 0 0 $border-radius $border-radius;
                 }
@@ -82,41 +105,33 @@ $font-size-100: 16px;
             }
 
             td {
-                max-height: 44px;
+                max-height: 45px;
             }
         }
 
-        .contentCell {
+        .table-cell {
             position: relative;
-            padding-right: 15px;
-            height: 44px;
-
-            .expandBtn {
-                position: absolute;
-                outline: none;
-                border: none;
-                background: #ffa700;
-                border-radius: 4px;
-                width: 20px;
-                height: 20px;
-                color: #fff;
-                right: 2px;
-                bottom: 2px;
-                text-align: center;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0.5;
-            }
+            height: 45px;
 
             &:hover {
-                .expandBtn {
+                .expand-btn {
                     opacity: 1;
                 }
             }
         }
 
-        .linkButton {
+        .content-cell {
+            padding-right: 15px;
+            height: inherit;
+
+            &:hover {
+                .expand-btn {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .link-button {
             overflow: hidden;
             width: 100%;
             display: block;
@@ -129,7 +144,7 @@ $font-size-100: 16px;
             text-overflow: ellipsis;
         }
 
-        .contentCellExpanded {
+        .expanded {
             height: auto;
         }
     }
